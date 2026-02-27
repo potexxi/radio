@@ -17,9 +17,11 @@ namespace Radio
     public class RadioClass
     {
         public double MinFrequency { get; } = 84;
+
         public double MaxFrequency { get; } = 108;
 
         private double _frequency;
+
         public double Frequency
         {
             get
@@ -37,6 +39,7 @@ namespace Radio
         }
 
         private double _volume;
+
         public double Volume
         {
             get
@@ -55,6 +58,7 @@ namespace Radio
         }
 
         private Preset[] _statiomemory;
+
         public Preset[] StationMemory
         {
             get
@@ -233,6 +237,5 @@ namespace Radio
         {
             return $"Radio: {Frequency} MHz - Volume: {Volume}%";
         }
-
     }
 }

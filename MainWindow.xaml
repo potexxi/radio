@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Radio"
         xmlns:user_controls="clr-namespace:_4_UserControl.user_controls;assembly=4_UserControl" x:Class="Radio.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="380" Width="710" ResizeMode="NoResize">
+        Title="Radio" Height="380" Width="710" ResizeMode="NoResize">
     <Grid Background="#FFACD8FF">
         <StackPanel>
             <StackPanel Orientation="Horizontal">

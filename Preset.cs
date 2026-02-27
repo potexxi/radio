@@ -13,12 +13,15 @@ namespace Radio
         public string Name {  get; set; }
 
         public int Index {  get; set; }
+
         public double MinFrequency { get; } = 84;
+
         public double MaxFrequency { get; } = 108;
 
         public RadioButton radioButton;
 
         private double _frequency;
+
         public double Frequency
         {
             get
@@ -32,6 +35,7 @@ namespace Radio
         }
 
         private double _volume;
+
         public double Volume
         {
             get
