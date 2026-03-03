@@ -5,7 +5,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -82,18 +81,13 @@ namespace Radio
         {
             InitializeComponent();
             Canvas canvas = CanvasFrequenz;
-            radio = new RadioClass(canvas);
+            radio = new RadioClass(canvas, LabelVolume);
             RadioButton[] radioButtons = { Preset0, Preset1, Preset2, Preset3, Preset4 };
             radio.ReadStation(radioButtons);
             radio.ChangeRadioButtonColor();
             radio.ChangeRadioButtonColor();
             player = new MediaPlayer();
             PlayRadio();
-        }
-
-        private void ResetRadioButtons()
-        {
-            
         }
 
         private void PlayRadio()
@@ -109,14 +103,12 @@ namespace Radio
         {
             radio.VolumeDown();
             player.Volume = radio.Volume / 100;
-            LabelVolume.Content = $"Volume: {radio.Volume}%";
         }
 
         private void ButtonVolumePlus_Click(object sender, RoutedEventArgs e)
         {
             radio.VolumeUp();
             player.Volume = radio.Volume / 100;
-            LabelVolume.Content = $"Volume: {radio.Volume}%";
         }
 
         private void ButtonFrequenzMinus_Click(object sender, RoutedEventArgs e)
@@ -136,16 +128,32 @@ namespace Radio
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
             string name = names[Convert.ToInt32(radio.Frequency) - Convert.ToInt32(radio.MinFrequency)];
+
+            string volume = $"{radio.Volume}";
+            string frequency = $"{radio.Frequency}";
+            WIndowRadioStation SaveStation = new WIndowRadioStation(volume, frequency);
+            SaveStation.ShowDialog();
+
+            if (SaveStation.result)
+            {  
+                if(SaveStation.name != "")
+                    name = SaveStation.name;
+            }
+            else
+            {
+                return;
+            }
+
             if (Preset0.IsChecked == true)
-                radio.SaveStation(0, Preset0, names);
+                radio.SaveStation(0, Preset0, names, name);
             else if (Preset1.IsChecked == true)
-                radio.SaveStation(1, Preset1, names);
+                radio.SaveStation(1, Preset1, names, name);
             else if (Preset2.IsChecked == true)
-                radio.SaveStation(2, Preset2, names);
+                radio.SaveStation(2, Preset2, names, name);
             else if (Preset3.IsChecked == true)
-                radio.SaveStation(3, Preset3, names);
+                radio.SaveStation(3, Preset3, names, name);
             else if (Preset4.IsChecked == true)
-                radio.SaveStation(4, Preset4, names);
+                radio.SaveStation(4, Preset4, names, name);
         }
 
         private void ButtonLoad_Click(object sender, RoutedEventArgs e)
@@ -161,6 +169,11 @@ namespace Radio
             else if (Preset4.IsChecked == true)
                 radio.LoadStation(4, Preset4, LabelVolume);
             PlayRadio();
+        }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

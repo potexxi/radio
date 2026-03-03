@@ -9,9 +9,9 @@
         Title="Radio" Height="380" Width="710" ResizeMode="NoResize">
     <Grid Background="#FFACD8FF">
         <StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel  Orientation="Horizontal">
                 <Button Background="#FF8BB0FF" x:Name="ButtonVolumeMinus" Width="60" Height="120" Content="-" FontSize="50" Click="ButtonVolumeMinus_Click"/>
-                <Label  x:Name="LabelVolume" Content="Volume: 15%" Width="580" Height="120" FontSize="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="Gray" BorderThickness="1"/>
+                <Label x:Name="LabelVolume" Width="580" BorderThickness="1"/>
                 <Button Background="#FF8BB0FF" x:Name="ButtonVolumePlus" Width="60" Height="120" Content="+" FontSize="50" Click="ButtonVolumePlus_Click"/>
             </StackPanel>
             <Label x:Name="LabelName" Content="" FontSize="18" HorizontalContentAlignment="Center"></Label>
@@ -44,11 +44,11 @@
                         <!-- Preset 5 -->
                     </Grid.ColumnDefinitions>
                     <!--ChatGPT Ende-->
-                    <RadioButton Background="#FF8BB0FF" x:Name="Preset0" Grid.Column="0" GroupName="Presets" Foreground="red" Content="Preset 1" IsChecked="True" Margin="10,0,0,0"/>
-                    <RadioButton Background="#FF8BB0FF" x:Name="Preset1" Grid.Column="2" GroupName="Presets" Foreground="red" Content="Preset 2"/>
-                    <RadioButton Background="#FF8BB0FF" x:Name="Preset2" Grid.Column="4" GroupName="Presets" Foreground="red" Content="Preset 3"/>
-                    <RadioButton Background="#FF8BB0FF" x:Name="Preset3" Grid.Column="6" GroupName="Presets" Foreground="red" Content="Preset 4"/>
-                    <RadioButton Background="#FF8BB0FF" x:Name="Preset4" Grid.Column="8" GroupName="Presets" Foreground="red" Content="Preset 5" Margin="0,0,10,0"/>
+                    <RadioButton Background="#FF8BB0FF" x:Name="Preset0" Grid.Column="0" GroupName="Presets" Foreground="red" Content="Preset 1" Margin="10,0,0,0" Checked="RadioButton_Checked"/>
+                    <RadioButton Background="#FF8BB0FF" x:Name="Preset1" Grid.Column="2" GroupName="Presets" Foreground="red" Content="Preset 2" Checked="RadioButton_Checked"/>
+                    <RadioButton Background="#FF8BB0FF" x:Name="Preset2" Grid.Column="4" GroupName="Presets" Foreground="red" Content="Preset 3" Checked="RadioButton_Checked"/>
+                    <RadioButton Background="#FF8BB0FF" x:Name="Preset3" Grid.Column="6" GroupName="Presets" Foreground="red" Content="Preset 4" Checked="RadioButton_Checked"/>
+                    <RadioButton Background="#FF8BB0FF" x:Name="Preset4" Grid.Column="8" GroupName="Presets" Foreground="red" Content="Preset 5" Margin="0,0,10,0" Checked="RadioButton_Checked"/>
                 </Grid>
                 <StackPanel Orientation="Horizontal">
                     <Button Background="#FF8BB0FF" x:Name="ButtonSave" Content="Save" Width="40" Click="ButtonSave_Click"/>

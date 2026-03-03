@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml.Linq;
-using System.Text.Json;
-using System.Diagnostics.Metrics;
-using System.Windows;
 
 namespace Radio
 {
@@ -79,16 +80,19 @@ namespace Radio
 
         private Label _labelFrequency;
 
-        public RadioClass(Canvas CanvasFrequency)
+        private Label _labelVolume;
+
+        public RadioClass(Canvas CanvasFrequency, Label label)
         {
             StationMemory = [new Preset(-1, -1, null, 0, null), new Preset(-1, -1, null, 1, null), new Preset(-1, -1, null, 2, null), new Preset(-1, -1, null, 3, null), new Preset(-1, -1, null, 4, null)];
             canvasFrequency = CanvasFrequency;
             Frequency = 84;
             Volume = 15;
+            _labelVolume = label;
             DrawFrequency();
         }
 
-        public RadioClass(Canvas CanvasFrequency, double frequency, double volume): this(CanvasFrequency)
+        public RadioClass(Canvas CanvasFrequency, Label labelvolume, double frequency, double volume): this(CanvasFrequency, labelvolume)
         {
             Frequency = frequency;
             Volume = volume;
@@ -116,7 +120,7 @@ namespace Radio
             _lineFrequency.Y2 = 90;
             _labelFrequency.Foreground = Brushes.Red;
             _labelFrequency.FontSize = 10;
-            _labelFrequency.Margin = new System.Windows.Thickness(0,-5,0,0);
+            _labelFrequency.Margin = new Thickness(0,-5,0,0);
             actualizeFrequency();
             int start = 84;
             for (int i = 0; i < 13; i++)
@@ -140,16 +144,24 @@ namespace Radio
             }
             canvasFrequency.Children.Add(_lineFrequency);
             canvasFrequency.Children.Add(_labelFrequency);
+            _labelVolume.Content = "Volume: 15%";
+            _labelVolume.Height = 120;
+            _labelVolume.FontSize = 25;
+            _labelVolume.HorizontalContentAlignment = HorizontalAlignment.Center;
+            _labelVolume.VerticalContentAlignment = VerticalAlignment.Center;
+            _labelVolume.BorderBrush = Brushes.Gray;
         }
 
         public void VolumeUp()
         {
             Volume += 5;
+            _labelVolume.Content = $"Volume: {Volume}%";
         }
 
         public void VolumeDown()
         {
             Volume -= 5;
+            _labelVolume.Content = $"Volume: {Volume}%";
         }
 
         public void FrequencyUp()
@@ -193,43 +205,49 @@ namespace Radio
             volume.Content = $"Volume: {this.Volume}%";
         }
 
-        public void SaveStation(int index, RadioButton radioButton, string[] names)
+        public void SaveStation(int index, RadioButton radioButton, string[] names, string name)
         {
             StationMemory[index].radioButton = radioButton;
             StationMemory[index].Frequency = Frequency;
             StationMemory[index].Volume = Volume;
-            StationMemory[index].Name = names[Convert.ToInt32(Frequency) - Convert.ToInt32(MinFrequency)];
+            StationMemory[index].Name = name;//names[Convert.ToInt32(Frequency) - Convert.ToInt32(MinFrequency)];
             ChangeRadioButtonColor();
             WriteStation(names);
         }
 
         public void WriteStation(string[] names)
         {
-            using (StreamWriter writer = new StreamWriter("station.json", false))
+            var options = new JsonSerializerOptions
             {
-                int counter = 0;
-                foreach (Preset preset in StationMemory)
-                {
-                    string name = "notset";
-                    if (preset.Frequency != -1)
-                        name = names[Convert.ToInt32(preset.Frequency) - Convert.ToInt32(preset.MinFrequency)];
-                    writer.WriteLine("{" + $"\"Index\":{counter},\"Frequency\":{preset.Frequency},\"Volume\":{preset.Volume},\"Name\":\"{name}\"" + "}");
-                    counter++;
-                }
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            using (StreamWriter writer = new StreamWriter("station.json", false, new UTF8Encoding(false)))
+            {
+                string json = JsonSerializer.Serialize(StationMemory, options);
+                writer.Write(json);
             }
         }
 
         public void ReadStation(RadioButton[] radioButtons)
         {
-            using(StreamReader reader = new StreamReader("station.json"))
+            try
             {
-                int counter = 0;
-                while (!reader.EndOfStream)
+                using (StreamReader reader = new StreamReader("station.json", Encoding.UTF8))
                 {
-                    StationMemory[counter] = JsonSerializer.Deserialize<Preset>(reader.ReadLine());
-                    StationMemory[counter].radioButton = radioButtons[counter];
-                    counter++;
+                    int counter = 0;
+                    List<Preset> presets = JsonSerializer.Deserialize<List<Preset>>(reader.ReadToEnd());
+                    foreach (Preset preset in presets)
+                    {
+                        StationMemory[counter] = presets[counter];
+                        StationMemory[counter].radioButton = radioButtons[counter];
+                        counter++;
+                    }
                 }
+            }
+            catch
+            {
+                MessageBox.Show("Es wurde keine File namens \"station.json\" gefunden. Es wird ein neues File angelegt.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
